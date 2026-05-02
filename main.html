@@ -1,0 +1,204 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Space Grotesk',sans-serif;background:transparent}
+  h2.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+  .wrap{padding:1.5rem 0}
+  .header{text-align:center;margin-bottom:2rem}
+  .header h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--color-text-primary);letter-spacing:-0.5px}
+  .header p{font-size:14px;color:var(--color-text-secondary);margin-top:6px}
+  .search-row{display:flex;gap:10px;margin-bottom:1.5rem}
+  .search-row input{flex:1;padding:10px 16px;border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-family:inherit;font-size:15px;background:var(--color-background-primary);color:var(--color-text-primary);outline:none}
+  .search-row input:focus{border-color:#7F77DD}
+  .search-row button{padding:10px 22px;background:#534AB7;color:#fff;border:none;border-radius:var(--border-radius-md);font-family:inherit;font-weight:500;font-size:14px;cursor:pointer;white-space:nowrap;transition:background 0.2s}
+  .search-row button:hover{background:#7F77DD}
+  .search-row button:disabled{background:var(--color-border-tertiary);cursor:not-allowed}
+  .platforms{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem}
+  .plat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 10px 10px;min-height:200px;position:relative}
+  .plat-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .plat-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .plat-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+  .cloud-area{width:100%;min-height:160px;position:relative;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start}
+  .word-tag{display:inline-block;border-radius:20px;padding:4px 10px;cursor:default;transition:transform 0.15s,opacity 0.15s;line-height:1.3;white-space:nowrap}
+  .word-tag:hover{transform:scale(1.08);opacity:0.9}
+  .status{font-size:13px;color:var(--color-text-secondary);text-align:center;padding:20px 0}
+  .loading-dots{display:inline-flex;gap:4px}
+  .loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--color-text-secondary);animation:dot 1s infinite}
+  .loading-dots span:nth-child(2){animation-delay:.2s}
+  .loading-dots span:nth-child(3){animation-delay:.4s}
+  @keyframes dot{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+  .ig{background:#E1306C15;border-color:#E1306C40}
+  .ig .plat-icon{background:#E1306C20}
+  .snap{background:#FFFC0015;border-color:#FFFC0040}
+  .snap .plat-icon{background:#FFFC0030}
+  .x-card{background:var(--color-background-secondary)}
+  .x-card .plat-icon{background:var(--color-background-tertiary)}
+  .fb{background:#1877F215;border-color:#1877F240}
+  .fb .plat-icon{background:#1877F220}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:12px;color:var(--color-text-secondary);margin-top:1rem}
+  .legend-item{display:flex;align-items:center;gap:5px}
+  .legend-dot{width:10px;height:10px;border-radius:50%}
+  .topic-badge{display:inline-block;background:#534AB720;color:#534AB7;border-radius:12px;padding:3px 10px;font-size:12px;margin-bottom:8px}
+  @media(max-width:600px){.platforms{grid-template-columns:1fr 1fr}}
+</style>
+
+<h2 class="sr-only">Social Media Trend Word Cloud Generator — Enter a topic to see trending keywords across Instagram, Snapchat, X, and Facebook</h2>
+
+<div class="wrap">
+  <div class="header">
+    <h1>Trend Word Cloud</h1>
+    <p>Enter any topic to discover trending keywords across all major platforms</p>
+  </div>
+
+  <div class="search-row">
+    <input type="text" id="topicInput" placeholder="e.g. AI, Football, Fashion, Gaming..." />
+    <button id="searchBtn" onclick="runSearch()">Search Trends ↗</button>
+  </div>
+
+  <div id="topicLabel" style="display:none;text-align:center;margin-bottom:1rem"></div>
+
+  <div class="platforms">
+    <div class="plat-card ig" id="card-ig">
+      <div class="plat-header">
+        <div class="plat-icon">📸</div>
+        <span class="plat-name">Instagram</span>
+      </div>
+      <div class="cloud-area" id="cloud-ig"><div class="status">Enter a topic above</div></div>
+    </div>
+    <div class="plat-card snap" id="card-snap">
+      <div class="plat-header">
+        <div class="plat-icon">👻</div>
+        <span class="plat-name">Snapchat</span>
+      </div>
+      <div class="cloud-area" id="cloud-snap"><div class="status">Enter a topic above</div></div>
+    </div>
+    <div class="plat-card x-card" id="card-x">
+      <div class="plat-header">
+        <div class="plat-icon" style="font-weight:900;font-size:16px;color:var(--color-text-primary)">✕</div>
+        <span class="plat-name">X (Twitter)</span>
+      </div>
+      <div class="cloud-area" id="cloud-x"><div class="status">Enter a topic above</div></div>
+    </div>
+    <div class="plat-card fb" id="card-fb">
+      <div class="plat-header">
+        <div class="plat-icon">📘</div>
+        <span class="plat-name">Facebook</span>
+      </div>
+      <div class="cloud-area" id="cloud-fb"><div class="status">Enter a topic above</div></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#534AB7"></div> Very Trending</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1D9E75"></div> Popular</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#BA7517"></div> Rising</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#888780"></div> Mentioned</div>
+  </div>
+</div>
+
+<script>
+const platformColors = {
+  ig: ['#E1306C','#C13584','#833AB4','#F56040','#FCAF45'],
+  snap: ['#FFAA00','#E6960A','#CC8200','#FFD060','#B36B00'],
+  x: ['var(--color-text-primary)','#378ADD','#888780','#534AB7','#1D9E75'],
+  fb: ['#1877F2','#0C5DB5','#3A8EF7','#0A4B9E','#185FA5']
+};
+
+const trendLevels = [
+  {size:22,weight:700,color:'#534AB7'},
+  {size:19,weight:700,color:'#1D9E75'},
+  {size:16,weight:500,color:'#BA7517'},
+  {size:13,weight:500,color:'#888780'},
+  {size:12,weight:400,color:'#888780'}
+];
+
+async function runSearch() {
+  const topic = document.getElementById('topicInput').value.trim();
+  if (!topic) { document.getElementById('topicInput').focus(); return; }
+
+  const btn = document.getElementById('searchBtn');
+  btn.disabled = true;
+  btn.textContent = 'Searching...';
+
+  const label = document.getElementById('topicLabel');
+  label.style.display = 'block';
+  label.innerHTML = `<span class="topic-badge">Topic: ${topic}</span>`;
+
+  ['ig','snap','x','fb'].forEach(p => {
+    document.getElementById('cloud-'+p).innerHTML = `<div class="status"><div class="loading-dots"><span></span><span></span><span></span></div></div>`;
+  });
+
+  const platformNames = {
+    ig: 'Instagram',
+    snap: 'Snapchat',
+    x: 'X Twitter',
+    fb: 'Facebook'
+  };
+
+  const promises = Object.keys(platformNames).map(async (key) => {
+    try {
+      const result = await fetchTrends(topic, platformNames[key]);
+      renderCloud(key, result);
+    } catch(e) {
+      document.getElementById('cloud-'+key).innerHTML = `<div class="status" style="color:var(--color-text-danger,#E24B4A)">Failed to load</div>`;
+    }
+  });
+
+  await Promise.all(promises);
+  btn.disabled = false;
+  btn.textContent = 'Search Trends ↗';
+}
+
+async function fetchTrends(topic, platform) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:1000,
+      tools:[{type:"web_search_20250305",name:"web_search"}],
+      system:`You are a social media trend analyst. The user gives you a topic and a platform. Search the web for what is trending about that topic on the given platform RIGHT NOW. Extract 18-24 trending keywords, hashtags, phrases, and topics. Respond ONLY with a valid JSON array of objects, no markdown, no explanation. Each object: {"word":"string","weight":1-5} where weight 5 = most trending, 1 = barely mentioned. Include hashtags (with #), short phrases, and single keywords. Mix sizes.`,
+      messages:[{role:"user",content:`Topic: "${topic}" | Platform: ${platform}. Find what is currently trending about this topic on ${platform}. Return ONLY JSON array.`}]
+    })
+  });
+  const data = await res.json();
+  let text = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+  text = text.replace(/```json|```/g,'').trim();
+  const start = text.indexOf('[');
+  const end = text.lastIndexOf(']');
+  if(start===-1||end===-1) throw new Error('No JSON');
+  return JSON.parse(text.slice(start,end+1));
+}
+
+function renderCloud(platform, words) {
+  const area = document.getElementById('cloud-'+platform);
+  area.innerHTML = '';
+  const colors = platformColors[platform];
+  const shuffled = [...words].sort(()=>Math.random()-0.5);
+  shuffled.forEach((item,i) => {
+    const level = trendLevels[Math.min(5-item.weight, trendLevels.length-1)];
+    const tag = document.createElement('span');
+    tag.className = 'word-tag';
+    tag.textContent = item.word;
+    tag.style.fontSize = level.size+'px';
+    tag.style.fontWeight = level.weight;
+    tag.style.color = colors[i % colors.length];
+    tag.style.background = colors[i % colors.length]+'18';
+    tag.style.border = `0.5px solid ${colors[i % colors.length]}40`;
+    tag.style.animationDelay = (i*0.04)+'s';
+    tag.style.opacity = '0';
+    tag.style.transform = 'translateY(8px)';
+    tag.style.transition = `opacity 0.3s ${i*0.04}s, transform 0.3s ${i*0.04}s`;
+    area.appendChild(tag);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      tag.style.opacity='1';
+      tag.style.transform='translateY(0)';
+    }));
+  });
+}
+
+document.getElementById('topicInput').addEventListener('keydown', e => {
+  if(e.key==='Enter') runSearch();
+});
+</script>
